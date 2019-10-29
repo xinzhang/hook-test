@@ -1,26 +1,30 @@
 import React, { useState, useMemo, useCallback, useEffect } from "react";
 import { Hello } from './Hello';
 import { Square } from './Square';
+import { useFetch } from './useFetch';
+import { useCountRenders } from "./useCounntRenders";
+
+function getDataLength(data) {
+  if (!data) {
+    return [];
+  }
+  console.log('get data length');
+  return data.split(' ').length;
+}
 
 const App = () => {
   const [count, setCount] = useState(0);
-  const favoriteNums = [1, 3, 5, 8];
 
-  const increment = useCallback( (n) => {
-    setCount( c => c + n);
-  }, [setCount]);
-
-  useEffect( () => {
-    console.log('useEffect triggered');
-  }, []);
+  const { data } = useFetch('https://api.kanye.rest');  
   
+  const longestWord = useMemo(() => getDataLength(data), [data]);
+
   return (
     <div >
-      <Hello increment={increment} />
       <div>Count: {count}</div>
-      {favoriteNums.map( n => (
-        <Square num={n} increment={increment} key={n}/>
-      ))}
+      <button onClick={ () => setCount(count + 1)}>increment</button>
+      <div>{longestWord}</div>
+      <div>{data}</div>
     </div>    
   );
 };
